@@ -1,4 +1,3 @@
-import fetch from 'node-fetch'
 import errorHandler from './errors/index.js'
 import { certToPEM, rsaPublicKeyToPEM } from './utils.js'
 
