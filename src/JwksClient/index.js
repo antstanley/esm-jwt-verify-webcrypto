@@ -1,6 +1,8 @@
 import errorHandler from './errors/index.js'
 import { certToPEM, rsaPublicKeyToPEM } from './utils.js'
 
+// Creates a class that fetches a JSON Web Key Set from the jwks_uri and provides methods to return it as a JSON object
+
 class JwksClient {
   constructor ({ jwksUri, audience, issuer, requestHeaders }) {
     this.jwksUri = jwksUri
@@ -45,29 +47,28 @@ class JwksClient {
         )
       }
 
-      const signingKeys = keys
-        .filter(
-          key =>
-            key.use === 'sig' &&
-            key.kty === 'RSA' &&
-            key.kid &&
-            ((key.x5c && key.x5c.length) || (key.n && key.e))
-        )
-        .map(key => {
-          if (key.x5c && key.x5c.length) {
-            return {
-              kid: key.kid,
-              nbf: key.nbf,
-              publicKey: certToPEM(key.x5c[0])
-            }
-          } else {
-            return {
-              kid: key.kid,
-              nbf: key.nbf,
-              rsaPublicKey: rsaPublicKeyToPEM(key.n, key.e)
-            }
-          }
-        })
+      const signingKeys = keys.filter(
+        key =>
+          key.use === 'sig' &&
+          key.kty === 'RSA' &&
+          key.kid &&
+          ((key.x5c && key.x5c.length) || (key.n && key.e))
+      )
+      //        .map(key => {
+      //          if (key.x5c && key.x5c.length) {
+      //            return {
+      //              kid: key.kid,
+      //              nbf: key.nbf,
+      //              publicKey: certToPEM(key.x5c[0])
+      //            }
+      //          } else {
+      //            return {
+      //              kid: key.kid,
+      //              nbf: key.nbf,
+      //              rsaPublicKey: rsaPublicKeyToPEM(key.n, key.e)
+      //            }
+      //          }
+      //        })
 
       if (!signingKeys.length) {
         return new errorHandler(
