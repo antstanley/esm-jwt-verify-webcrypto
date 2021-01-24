@@ -1,11 +1,11 @@
-# @esmodule/jwt-verify
+# @esmodule/jwt-verify-webcrypto
 
-ES module to verify JWT signatures.
+ES module to verify JWT signatures using the WebCrypto API.
 
 ## Usage
 
 ```js
-import authenticate from '@esmodule/jwt-verify'
+import authenticate from '@esmodule/jwt-verify-webcrypto'
 
 const validateToken = async (token) => {
     const options = {

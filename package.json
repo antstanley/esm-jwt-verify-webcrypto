@@ -1,35 +1,21 @@
 {
-  "name": "@esmodule/jwt-verify",
+  "name": "@esmodule/jwt-verify-webcrypto",
   "version": "0.2.1",
-  "description": "ES Module to verify JWTs",
+  "description": "ES Module to verify JWTs using the browser WebCrypto API",
   "repository": {
     "type": "git",
     "url": "https://github.com/antstanley/esm-jwt-verify"
   },
   "license": "MIT",
-  "main": "lib/cjs/index.js",
-  "module": "lib/esm/index.js",
+  "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "build": "npm run build:clean && npm run build:esm && npm run build:cjs",
-    "build:esm": "cp -r ./src ./lib/esm",
-    "build:js": "babel src/",
-    "build:cjs": "npm run build:js -- --env-name cjs --out-dir lib/cjs",
-    "build:clean": "rm -rf lib && mkdir lib",
-    "prepare": "npm run build"
+    "test": ""
   },
-  "keywords": [
-    "jwt",
-    "esmodule"
-  ],
+  "keywords": ["jwt", "esmodule", "webcrypto", "browser"],
   "author": "Ant Stanley",
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/plugin-transform-destructuring": "^7.5.0",
-    "@babel/preset-env": "^7.5.5",
     "ava": "^2.2.0",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
@@ -37,10 +23,8 @@
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
-    "esm": "^3.2.25"
+    "esm": "^3.2.25",
+    "puppeteer": "^5.5.0"
   },
-  "dependencies": {
-    "ecdsa-sig-formatter": "^1.0.11",
-    "node-fetch": "^2.6.0"
-  }
+  "dependencies": {}
 }
