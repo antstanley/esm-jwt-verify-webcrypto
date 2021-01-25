@@ -1,7 +1,7 @@
 import { JwksClient } from './JwksClient/index.js'
 import verifyJWT from './verifyJWT/index.js'
 import decodeJWT from './decodeJWT/index.js'
-let signingKey
+let jwk
 
 const authenticate = async (token, jwksOptions) => {
   try {
@@ -12,10 +12,9 @@ const authenticate = async (token, jwksOptions) => {
     const { header } = decodedToken
     const { kid } = header
 
-    if (!signingKey) {
+    if (!jwk) {
       const client = new JwksClient({ jwksUri })
-      const key = await client.getSigningKey(kid)
-      signingKey = key.publicKey || key.rsaPublicKey
+      jwk = await client.getSigningKey(kid)
     }
 
     const verifyOptions = {
@@ -24,7 +23,7 @@ const authenticate = async (token, jwksOptions) => {
       complete: true
     }
 
-    return verifyJWT(decodedToken, signingKey, verifyOptions)
+    return verifyJWT(decodedToken, jwk, verifyOptions)
   } catch (error) {
     return {
       error

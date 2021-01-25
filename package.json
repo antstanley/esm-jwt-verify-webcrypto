@@ -1,6 +1,6 @@
 {
   "name": "@esmodule/jwt-verify-webcrypto",
-  "version": "0.2.1",
+  "version": "0.0.1",
   "description": "ES Module to verify JWTs using the browser WebCrypto API",
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
   },
   "keywords": ["jwt", "esmodule", "webcrypto", "browser"],
   "author": "Ant Stanley",
-  "files": ["lib"],
+  "files": ["src"],
   "devDependencies": {
     "ava": "^2.2.0",
     "eslint": "^5.16.0",

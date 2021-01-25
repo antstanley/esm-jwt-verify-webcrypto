@@ -1,6 +1,6 @@
 import jwa from './jwa.js'
 
-const jwsVerify = async (decodedToken, secretOrKey) => {
+const jwsVerify = async (decodedToken, jwk) => {
   const { signature, securedInput, header } = decodedToken
   const algorithm = header.alg
 
@@ -11,7 +11,7 @@ const jwsVerify = async (decodedToken, secretOrKey) => {
   }
 
   const algo = new jwa(algorithm)
-  return algo.verify(securedInput, signature, secretOrKey)
+  return algo.verify(securedInput, signature, jwk)
 }
 
 export default jwsVerify
