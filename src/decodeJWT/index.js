@@ -2,7 +2,7 @@ const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/
 
 function toString (obj) {
   if (typeof obj === 'string') return obj
-  if (typeof obj === 'number' || Buffer.isBuffer(obj)) return obj.toString()
+  if (typeof obj === 'number') return obj.toString()
   return JSON.stringify(obj)
 }
 
@@ -25,7 +25,7 @@ function securedInputFromJWS (jwsSig) {
 
 function headerFromJWS (jwsSig) {
   const encodedHeader = jwsSig.split('.', 1)[0]
-  return safeJsonParse(Buffer.from(encodedHeader, 'base64').toString('binary'))
+  return safeJsonParse(atob(encodedHeader))
 }
 
 function signatureFromJWS (jwsSig) {
@@ -35,7 +35,7 @@ function signatureFromJWS (jwsSig) {
 function payloadFromJWS (jwsSig, encoding) {
   encoding = encoding || 'utf8'
   const payload = jwsSig.split('.')[1]
-  return Buffer.from(payload, 'base64').toString(encoding)
+  return atob(payload)
 }
 
 function isValidJws (string) {
