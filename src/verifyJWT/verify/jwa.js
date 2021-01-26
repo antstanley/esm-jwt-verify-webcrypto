@@ -89,7 +89,7 @@ class jwa {
         atob(signature.replace(/_/g, '/').replace(/-/g, '+'))
       ),
       jwk,
-      bits
+      bits: this.bits
     }
 
     switch (this.algo) {
