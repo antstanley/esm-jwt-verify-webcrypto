@@ -1,6 +1,6 @@
 {
   "name": "@esmodule/jwt-verify-webcrypto",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "ES Module to verify JWTs using the browser WebCrypto API",
   "repository": {
     "type": "git",
