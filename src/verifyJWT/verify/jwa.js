@@ -1,8 +1,15 @@
 const MSG_INVALID_ALGORITHM =
   'is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".'
 
-async function createHmacVerify (data, signature, jwk, bits) {
-  const encoder = new TextEncoder()
+function byteStringToUint8Array (byteString) {
+  const ui = new Uint8Array(byteString.length)
+  for (let i = 0; i < byteString.length; ++i) {
+    ui[i] = byteString.charCodeAt(i)
+  }
+  return ui
+}
+
+async function createHmacVerify ({ data, signature, jwk, bits }) {
   const key = await crypto.subtle.importKey(
     'jwk',
     jwk,
@@ -11,16 +18,10 @@ async function createHmacVerify (data, signature, jwk, bits) {
     ['verify']
   )
 
-  return crypto.subtle.verify(
-    'HMAC',
-    key,
-    encoder.encode(signature),
-    encoder.encode(data)
-  )
+  return crypto.subtle.verify('HMAC', key, signature, data)
 }
 
-async function createKeyVerify (data, signature, jwk, bits) {
-  const encoder = new TextEncoder()
+async function createKeyVerify ({ data, signature, jwk, bits }) {
   const key = await crypto.subtle.importKey(
     'jwk',
     jwk,
@@ -29,16 +30,10 @@ async function createKeyVerify (data, signature, jwk, bits) {
     ['verify']
   )
 
-  return crypto.subtle.verify(
-    'RSASSA-PKCS1-v1_5',
-    key,
-    encoder.encode(signature),
-    encoder.encode(data)
-  )
+  return crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, signature, data)
 }
 
-async function createPSSKeyVerify (data, signature, jwk, bits) {
-  const encoder = new TextEncoder()
+async function createPSSKeyVerify ({ data, signature, jwk, bits }) {
   const saltLength = Math.ceil((bits - 1) / 8) - bits * 8 - 2
   const key = await crypto.subtle.importKey(
     'jwk',
@@ -51,12 +46,12 @@ async function createPSSKeyVerify (data, signature, jwk, bits) {
   return crypto.subtle.verify(
     { name: 'RSA-PSS', saltLength },
     key,
-    encoder.encode(signature),
-    encoder.encode(data)
+    signature,
+    data
   )
 }
 
-async function createECDSAVerify (data, signature, jwk, bits) {
+async function createECDSAVerify ({ data, signature, jwk, bits }) {
   const encoder = new TextEncoder()
   const key = await crypto.subtle.importKey(
     'jwk',
@@ -69,12 +64,12 @@ async function createECDSAVerify (data, signature, jwk, bits) {
   return crypto.subtle.verify(
     { name: 'ECDSA', hash: `SHA-${bits}` },
     key,
-    encoder.encode(signature),
-    encoder.encode(data)
+    signature,
+    data
   )
 }
 
-function createNoneVerifier (thing, signature) {
+function createNoneVerifier ({ data, signature, jwk, bits }) {
   return signature === ''
 }
 
@@ -86,22 +81,32 @@ class jwa {
     this.bits = match[2]
   }
 
-  verify (thing, signature, jwk) {
+  verify (data, signature, jwk) {
+    const encoder = new TextEncoder()
+    const opts = {
+      data: encoder.encode(data),
+      signature: byteStringToUint8Array(
+        atob(signature.replace(/_/g, '/').replace(/-/g, '+'))
+      ),
+      jwk,
+      bits
+    }
+
     switch (this.algo) {
       case 'hs':
-        return createHmacVerify(thing, signature, jwk, this.bits)
+        return createHmacVerify(opts)
         break
       case 'rs':
-        return createKeyVerify(thing, signature, jwk, this.bits)
+        return createKeyVerify(opts)
         break
       case 'ps':
-        return createPSSKeyVerify(thing, signature, jwk, this.bits)
+        return createPSSKeyVerify(opts)
         break
       case 'es':
-        return createECDSAVerify(thing, signature, jwk, this.bits)
+        return createECDSAVerify(opts)
         break
       case 'none':
-        return createNoneVerifier(thing, signature)
+        return createNoneVerifier(opts)
         break
       default:
         return { error: 'no valid algorithm declared' }

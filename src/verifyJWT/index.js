@@ -1,4 +1,3 @@
-// import errorHandler from './errorHandler'
 import validation from './validation/index.js'
 import verifyJWT from './verify/index.js'
 
